@@ -36,7 +36,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 ## Import data and processing
 
-### Import July 2025 taxi data
+### Import July 2024 taxi data
 
 ```{r}
 #| label: import-taxi-data
@@ -166,7 +166,7 @@ cat("Number of hourly records:", nrow(weather_data), "\n")
 cat("Date range:", as.character(min(weather_data$weather_date)), "to", 
     as.character(max(weather_data$weather_date)), "\n")
 cat("Temperature range:", round(min(weather_data$temperature, na.rm = TRUE), 1), 
-    "to", round(max(weather_data$temperature, na.rm = TRUE), 1), "°C\n")
+    "to", round(max(weather_data$temperature, na.rm = TRUE), 1), "Celcius\n")
 cat("Days with precipitation:", sum(weather_data$precipitation > 0, na.rm = TRUE), "\n\n")
 
 print(head(weather_data))
@@ -210,7 +210,7 @@ fare_amount > 0 & fare_amount < 200,
 total_amount > 0
 ) %>%
 
-# Remove duplicates (just in case)
+# Remove duplicates
 
 distinct()
 
@@ -229,39 +229,27 @@ cat("Date range:", min(taxi_clean$pickup_date), "to", max(taxi_clean$pickup_date
 cat("Cleaning collision data...\n")
 
 collision_clean <- collision_data_jan %>%
-
-# Keep only relevant columns
-
-select(
-date, crash_time, borough, zip_code,
-on_street_name, cross_street_name,
-number_of_persons_injured, number_of_persons_killed,
-latitude, longitude
-) %>%
-
-# Remove invalid or incomplete records
-
-filter(
-!is.na(date),
-!is.na(crash_time),
-!is.na(latitude),
-!is.na(longitude),
-latitude != 0 & longitude != 0
-) %>%
-
-# Clean up borough names
-
-mutate(
-borough = str_to_title(trimws(borough)),
-number_of_persons_injured = coalesce(number_of_persons_injured, 0),
-number_of_persons_killed = coalesce(number_of_persons_killed, 0),
-hour = hour(crash_time)
-) %>%
+  select(
+    date, crash_time, borough, zip_code,
+    on_street_name, cross_street_name,
+    number_of_persons_injured, number_of_persons_killed,
+    latitude, longitude
+  ) %>%
+  filter(
+    !is.na(date),
+    !is.na(crash_time),
+    !is.na(latitude),
+    !is.na(longitude),
+    latitude != 0 & longitude != 0
+  ) %>%
+  mutate(
+    borough = str_to_title(trimws(borough)),
+    number_of_persons_injured = coalesce(number_of_persons_injured, 0),
+    number_of_persons_killed = coalesce(number_of_persons_killed, 0),
+    hour = hour(crash_time)
+  ) %>%
   drop_na(borough) %>%
-distinct()
-
-collision_clean <- collision_data_jan %>%
-  drop_na(borough, crash_time, number_of_persons_injured)
+  distinct()
 
 cat("Collision data cleaned successfully!\n")
 cat("Records after cleaning:", nrow(collision_clean), "\n")
@@ -279,30 +267,21 @@ cat("Unique boroughs:", paste(unique(collision_clean$borough), collapse = ", "),
 cat("Cleaning weather data...\n")
 
 weather_clean <- weather_data %>%
-
-# Remove missing or nonsensical readings
-
-filter(!is.na(datetime), !is.na(temperature)) %>%
-filter(temperature > -30 & temperature < 50) %>%  # reasonable NYC range
-mutate(
-weather_date = as.Date(datetime),
-weather_hour = hour(datetime),
-precipitation = ifelse(is.na(precipitation), 0, precipitation),
-rain = ifelse(is.na(rain), 0, rain)
-) %>%
-
-# Deduplicate hourly records
-
-distinct(weather_date, weather_hour, .keep_all = TRUE)
-
-wether_clean <- weather_data %>%
-  drop_na(datetime, temperature, precipitation)
+  filter(!is.na(datetime), !is.na(temperature)) %>%
+  filter(temperature > -30 & temperature < 50) %>%
+  mutate(
+    weather_date = as.Date(datetime),
+    weather_hour = hour(datetime),
+    precipitation = coalesce(precipitation, 0),
+    rain = coalesce(rain, 0)
+  ) %>%
+  distinct(weather_date, weather_hour, .keep_all = TRUE)
 
 cat("Weather data cleaned successfully!\n")
 cat("Records after cleaning:", nrow(weather_clean), "\n")
 cat("Temperature range:",
-round(min(weather_clean$temperature, na.rm = TRUE), 1), "to",
-round(max(weather_clean$temperature, na.rm = TRUE), 1), "°C\n\n")
+    round(min(weather_clean$temperature, na.rm = TRUE), 1), "to",
+    round(max(weather_clean$temperature, na.rm = TRUE), 1), "°C\n\n")
 
 ```
 
@@ -468,7 +447,7 @@ print(p2)
 #| warning: false
 #| message: false
 
-# Line Plot of Average Injuries per Hour
+# Line Plot of Average injuries per hour
 daily_crashes <- collision_data_jan %>%
   mutate(hour = hour(crash_time)) %>%
   group_by(hour) %>%

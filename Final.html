@@ -116,8 +116,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="import-data-and-processing" class="level2">
 <h2 class="anchored" data-anchor-id="import-data-and-processing">Import data and processing</h2>
-<section id="import-july-2025-taxi-data" class="level3">
-<h3 class="anchored" data-anchor-id="import-july-2025-taxi-data">Import July 2025 taxi data</h3>
+<section id="import-july-2024-taxi-data" class="level3">
+<h3 class="anchored" data-anchor-id="import-july-2024-taxi-data">Import July 2024 taxi data</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>taxi_url <span class="ot">&lt;-</span> <span class="st">"https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-07.parquet"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -289,9 +289,9 @@ Weather Data Import Summary:</code></pre>
 <pre><code>Date range: 2024-07-01 to 2024-07-31 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Temperature range:"</span>, <span class="fu">round</span>(<span class="fu">min</span>(weather_data<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"to"</span>, <span class="fu">round</span>(<span class="fu">max</span>(weather_data<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"°C</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"to"</span>, <span class="fu">round</span>(<span class="fu">max</span>(weather_data<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"Celcius</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Temperature range: 16.3 to 34.5 °C</code></pre>
+<pre><code>Temperature range: 16.3 to 34.5 Celcius</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Days with precipitation:"</span>, <span class="fu">sum</span>(weather_data<span class="sc">$</span>precipitation <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -347,7 +347,7 @@ Weather Data Import Summary:</code></pre>
 <span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>total_amount <span class="sc">&gt;</span> <span class="dv">0</span></span>
 <span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
 <span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove duplicates (just in case)</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove duplicates</span></span>
 <span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>()</span>
 <span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a></span>
@@ -373,51 +373,39 @@ Weather Data Import Summary:</code></pre>
 <pre><code>Cleaning collision data...</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>collision_clean <span class="ot">&lt;-</span> collision_data_jan <span class="sc">%&gt;%</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only relevant columns</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>date, crash_time, borough, zip_code,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>on_street_name, cross_street_name,</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>number_of_persons_injured, number_of_persons_killed,</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>latitude, longitude</span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove invalid or incomplete records</span></span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(</span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="sc">!</span><span class="fu">is.na</span>(date),</span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="sc">!</span><span class="fu">is.na</span>(crash_time),</span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="sc">!</span><span class="fu">is.na</span>(latitude),</span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="sc">!</span><span class="fu">is.na</span>(longitude),</span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>latitude <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">&amp;</span> longitude <span class="sc">!=</span> <span class="dv">0</span></span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up borough names</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    date, crash_time, borough, zip_code,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    on_street_name, cross_street_name,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    number_of_persons_injured, number_of_persons_killed,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    latitude, longitude</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(date),</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(crash_time),</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(latitude),</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(longitude),</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    latitude <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">&amp;</span> longitude <span class="sc">!=</span> <span class="dv">0</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">borough =</span> <span class="fu">str_to_title</span>(<span class="fu">trimws</span>(borough)),</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">number_of_persons_injured =</span> <span class="fu">coalesce</span>(number_of_persons_injured, <span class="dv">0</span>),</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">number_of_persons_killed =</span> <span class="fu">coalesce</span>(number_of_persons_killed, <span class="dv">0</span>),</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour =</span> <span class="fu">hour</span>(crash_time)</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(borough) <span class="sc">%&gt;%</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
 <span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
-<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="at">borough =</span> <span class="fu">str_to_title</span>(<span class="fu">trimws</span>(borough)),</span>
-<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="at">number_of_persons_injured =</span> <span class="fu">coalesce</span>(number_of_persons_injured, <span class="dv">0</span>),</span>
-<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="at">number_of_persons_killed =</span> <span class="fu">coalesce</span>(number_of_persons_killed, <span class="dv">0</span>),</span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="at">hour =</span> <span class="fu">hour</span>(crash_time)</span>
-<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(borough) <span class="sc">%&gt;%</span></span>
-<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>()</span>
-<span id="cb41-32"><a href="#cb41-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-33"><a href="#cb41-33" aria-hidden="true" tabindex="-1"></a>collision_clean <span class="ot">&lt;-</span> collision_data_jan <span class="sc">%&gt;%</span></span>
-<span id="cb41-34"><a href="#cb41-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(borough, crash_time, number_of_persons_injured)</span>
-<span id="cb41-35"><a href="#cb41-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-36"><a href="#cb41-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Collision data cleaned successfully!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Collision data cleaned successfully!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Collision data cleaned successfully!</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Records after cleaning:"</span>, <span class="fu">nrow</span>(collision_clean), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Records after cleaning: 4965 </code></pre>
+<pre><code>Records after cleaning: 4920 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unique boroughs:"</span>, <span class="fu">paste</span>(<span class="fu">unique</span>(collision_clean<span class="sc">$</span>borough), <span class="at">collapse =</span> <span class="st">", "</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Unique boroughs: BROOKLYN, STATEN ISLAND, QUEENS, MANHATTAN, BRONX </code></pre>
+<pre><code>Unique boroughs: Staten Island, Brooklyn, Queens, Manhattan, Bronx </code></pre>
 </div>
 </div>
 </section>
@@ -429,26 +417,17 @@ Weather Data Import Summary:</code></pre>
 <pre><code>Cleaning weather data...</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>weather_clean <span class="ot">&lt;-</span> weather_data <span class="sc">%&gt;%</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove missing or nonsensical readings</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(datetime), <span class="sc">!</span><span class="fu">is.na</span>(temperature)) <span class="sc">%&gt;%</span></span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(temperature <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">30</span> <span class="sc">&amp;</span> temperature <span class="sc">&lt;</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span>  <span class="co"># reasonable NYC range</span></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="at">weather_date =</span> <span class="fu">as.Date</span>(datetime),</span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="at">weather_hour =</span> <span class="fu">hour</span>(datetime),</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="at">precipitation =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(precipitation), <span class="dv">0</span>, precipitation),</span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="at">rain =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(rain), <span class="dv">0</span>, rain)</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Deduplicate hourly records</span></span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a><span class="fu">distinct</span>(weather_date, weather_hour, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>wether_clean <span class="ot">&lt;-</span> weather_data <span class="sc">%&gt;%</span></span>
-<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(datetime, temperature, precipitation)</span>
-<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Weather data cleaned successfully!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(datetime), <span class="sc">!</span><span class="fu">is.na</span>(temperature)) <span class="sc">%&gt;%</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(temperature <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">30</span> <span class="sc">&amp;</span> temperature <span class="sc">&lt;</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">weather_date =</span> <span class="fu">as.Date</span>(datetime),</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">weather_hour =</span> <span class="fu">hour</span>(datetime),</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">precipitation =</span> <span class="fu">coalesce</span>(precipitation, <span class="dv">0</span>),</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rain =</span> <span class="fu">coalesce</span>(rain, <span class="dv">0</span>)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(weather_date, weather_hour, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Weather data cleaned successfully!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Weather data cleaned successfully!</code></pre>
 </div>
@@ -457,8 +436,8 @@ Weather Data Import Summary:</code></pre>
 <pre><code>Records after cleaning: 744 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Temperature range:"</span>,</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">min</span>(weather_clean<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"to"</span>,</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">max</span>(weather_clean<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"°C</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">min</span>(weather_clean<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"to"</span>,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">max</span>(weather_clean<span class="sc">$</span>temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="st">"°C</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Temperature range: 16.3 to 34.5 °C</code></pre>
 </div>
@@ -584,13 +563,13 @@ Weather Data Import Summary:</code></pre>
  Mean   : 95811   Mean   :16.51     Mean   :3.608     Mean   :2762321  
  3rd Qu.:106645   3rd Qu.:17.06     3rd Qu.:3.866     3rd Qu.:3071619  
  Max.   :123940   Max.   :18.29     Max.   :4.547     Max.   :3489869  
- total_crashes   total_injuries  avg_temperature total_precipitation
- Min.   :  0.0   Min.   :  0.0   Min.   :21.52   Min.   : 0.000     
- 1st Qu.:157.5   1st Qu.: 84.0   1st Qu.:24.13   1st Qu.: 0.000     
- Median :165.0   Median : 92.0   Median :25.10   Median : 0.900     
- Mean   :160.2   Mean   : 92.0   Mean   :25.29   Mean   : 4.484     
- 3rd Qu.:177.5   3rd Qu.: 99.5   3rd Qu.:26.87   3rd Qu.: 4.150     
- Max.   :193.0   Max.   :134.0   Max.   :28.50   Max.   :35.400     </code></pre>
+ total_crashes   total_injuries   avg_temperature total_precipitation
+ Min.   :  0.0   Min.   :  0.00   Min.   :21.52   Min.   : 0.000     
+ 1st Qu.:155.0   1st Qu.: 84.00   1st Qu.:24.13   1st Qu.: 0.000     
+ Median :163.0   Median : 91.00   Median :25.10   Median : 0.900     
+ Mean   :158.7   Mean   : 91.03   Mean   :25.29   Mean   : 4.484     
+ 3rd Qu.:176.5   3rd Qu.: 99.00   3rd Qu.:26.87   3rd Qu.: 4.150     
+ Max.   :191.0   Max.   :134.00   Max.   :28.50   Max.   :35.400     </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Key insights</span></span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>kpis <span class="ot">&lt;-</span> combined_daily <span class="sc">%&gt;%</span></span>
@@ -614,7 +593,7 @@ Key Performance Indicators:</code></pre>
 <pre><code># A tibble: 1 × 7
   total_days avg_daily_trips avg_daily_crashes total_revenue
        &lt;int&gt;           &lt;dbl&gt;             &lt;dbl&gt;         &lt;dbl&gt;
-1         31          95811.              160.     85631940.
+1         31          95811.              159.     85631940.
 # ℹ 3 more variables: crash_rate_per_1000_trips &lt;dbl&gt;, rainy_day_crashes &lt;dbl&gt;,
 #   dry_day_crashes &lt;dbl&gt;</code></pre>
 </div>
@@ -666,7 +645,7 @@ Key Performance Indicators:</code></pre>
 <section id="vehicle-collisions" class="level3">
 <h3 class="anchored" data-anchor-id="vehicle-collisions">Vehicle collisions</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Line Plot of Average Injuries per Hour</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Line Plot of Average injuries per hour</span></span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>daily_crashes <span class="ot">&lt;-</span> collision_data_jan <span class="sc">%&gt;%</span></span>
 <span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hour =</span> <span class="fu">hour</span>(crash_time)) <span class="sc">%&gt;%</span></span>
 <span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(hour) <span class="sc">%&gt;%</span></span>
@@ -782,19 +761,19 @@ Sample location data:</code></pre>
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 5
-   borough       on_street_name   cross_street_name off_street_name     zip_code
-   &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;             &lt;chr&gt;                  &lt;dbl&gt;
- 1 BROOKLYN      3 Avenue         17 street         &lt;NA&gt;                   11215
- 2 STATEN ISLAND AMBOY ROAD       JOLINE AVENUE     &lt;NA&gt;                   10307
- 3 BROOKLYN      &lt;NA&gt;             &lt;NA&gt;              2926      WEST 25 …    11224
- 4 BROOKLYN      BAY RIDGE AVENUE VISTA PLACE       &lt;NA&gt;                   11220
- 5 STATEN ISLAND ARTHUR KILL ROAD CLARKE AVENUE     &lt;NA&gt;                   10306
- 6 QUEENS        &lt;NA&gt;             &lt;NA&gt;              1021      BEACH 21…    11691
- 7 MANHATTAN     COLUMBUS AVENUE  WEST 83 STREET    &lt;NA&gt;                   10024
- 8 QUEENS        JACKSON AVENUE   PEARSON STREET    &lt;NA&gt;                   11101
- 9 QUEENS        84 STREET        32 AVENUE         &lt;NA&gt;                   11370
-10 MANHATTAN     &lt;NA&gt;             &lt;NA&gt;              30        KENMARE …    10012</code></pre>
+<pre><code># A tibble: 10 × 4
+   borough       on_street_name   cross_street_name zip_code
+   &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;                &lt;dbl&gt;
+ 1 Staten Island AMBOY ROAD       JOLINE AVENUE        10307
+ 2 Brooklyn      &lt;NA&gt;             &lt;NA&gt;                 11224
+ 3 Brooklyn      BAY RIDGE AVENUE VISTA PLACE          11220
+ 4 Staten Island ARTHUR KILL ROAD CLARKE AVENUE        10306
+ 5 Queens        &lt;NA&gt;             &lt;NA&gt;                 11691
+ 6 Manhattan     COLUMBUS AVENUE  WEST 83 STREET       10024
+ 7 Queens        JACKSON AVENUE   PEARSON STREET       11101
+ 8 Queens        84 STREET        32 AVENUE            11370
+ 9 Manhattan     &lt;NA&gt;             &lt;NA&gt;                 10012
+10 Brooklyn      &lt;NA&gt;             &lt;NA&gt;                 11208</code></pre>
 </div>
 </div>
 <div class="cell">
