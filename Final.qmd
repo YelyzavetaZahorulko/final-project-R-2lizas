@@ -1,7 +1,10 @@
 ---
 title: "When and Why Taxi Accidents Happen: Exploring Safety Patterns Across NYC"
 author: "Yelyzaveta Zahorulko & Yelizaveta Yelizarova"
-format: html
+format: 
+  html:
+    embed-resources: false
+
 editor: visual
 ---
 
